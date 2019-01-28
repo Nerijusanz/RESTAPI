@@ -5,12 +5,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import bluebirdPromise from "bluebird"; // overwrite default mongoose promise into bluebird promise
 
-/*
-import auth from './routes/auth';
-import dashboard from './routes/dashboard';
-import book from './routes/book';
-import booksApi from './routes/booksApi';
-*/
+import users from "./routes/users";
 
 dotenv.config(); // INITIALIZE .env PARAMS
 
@@ -32,12 +27,9 @@ mongoose.set("useCreateIndex", true);
 // -----------------------------------------
 
 // ----------------Routers------------------
-/*
-app.use('/api/auth', auth);
-app.use('/api/dashboard', dashboard);
-app.use('/api/books', book);
-app.use('/api/books_api', booksApi);
-*/
+
+app.use("/api/users", users);
+
 // -----------------------------------------
 
 if (process.env.NODE_ENV === "production") {
