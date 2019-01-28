@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  res.send({ request: "POST" });
+  req.body.user ? res.send(req.body.user) : res.send({});
 });
 
 router.put("/:id", (req, res) => {
