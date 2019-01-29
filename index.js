@@ -10,8 +10,6 @@ import users from "./routes/users";
 dotenv.config(); // INITIALIZE .env PARAMS
 
 const app = express();
-// bodyParser middleware
-app.use(bodyParser.json());
 
 // -------------MongoDB setups-------------
 mongoose.Promise = bluebirdPromise; //mongoose Promise deprecated; add bluebird promise library
@@ -26,11 +24,14 @@ mongoose.set("useCreateIndex", true);
 
 // -----------------------------------------
 
-// ----------------Routers------------------
+// ----------------bodyParser middleware ---------------
+app.use(bodyParser.json());
+
+// ----------------Routers midleware------------------
 
 app.use("/api/users", users);
 
-// -----------------------------------------
+// --------------------------------------------------------
 
 if (process.env.NODE_ENV === "production") {
   // set static path to react production build folder
@@ -45,6 +46,8 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "index.html"));
   });
 }
+
+// ---------------------------------------------------------
 
 const PORT = process.env.LISTEN_PORT || 5000;
 
