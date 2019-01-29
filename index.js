@@ -14,7 +14,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // -------------MongoDB setups-------------
-mongoose.Promise = bluebirdPromise; // overwrite default mongoose promise library into bluebird promise library
+mongoose.Promise = bluebirdPromise; //mongoose Promise deprecated; add bluebird promise library
 mongoose
   .connect(
     process.env.MONGODB_URL,
