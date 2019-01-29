@@ -9,7 +9,7 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
-  if (!req.body.user || typeof req.body.user == "undefined") {
+  if (!req.body.user || typeof req.body.user === "undefined") {
     res
       .status(500)
       .send({ signup_errors: { serverError: "user data undefined" } })
@@ -64,16 +64,54 @@ router.post("/", (req, res, next) => {
     })
     .catch(
       err =>
-        res.status(422).send({ signup_errors: { serverError: err.message } }) //mongo db error; unprocesable
+        res
+          .status(500)
+          .send({ signup_errors: { serverError: "user save failure" } }) //mongo db error; unprocesable
     );
 });
 
 router.put("/:id", (req, res, next) => {
-  res.send({ request: "UPDATE", id: req.params.id });
+  if (!req.params.id || typeof req.params.id === "undefined") {
+    res
+      .status(500)
+      .send({ signup_errors: { serverError: "user update failure" } })
+      .end();
+    return;
+  }
+
+  User.findOneAndReplace({ _id: req.params.id }, req.body.user)
+    .then(user => {
+      User.findOne({ _id: user._id }).then(user => {
+        res.send(user);
+      });
+    })
+    .catch(
+      err =>
+        res
+          .status(500)
+          .send({ signup_errors: { serverError: "user update failure" } }) //mongo db error; unprocesable
+    );
 });
 
 router.delete("/:id", (req, res, next) => {
-  res.send({ request: "DELETE", id: req.params.id });
+  if (!req.params.id || typeof req.params.id === "undefined") {
+    res
+      .status(500)
+      .send({ signup_errors: { serverError: "user delete failure" } })
+      .end();
+    return;
+  }
+
+  User.findOneAndDelete({ _id: req.params.id })
+    .then(user => {
+      res.send(user);
+    })
+    .catch(
+      err =>
+        res
+          .status(500)
+          .send({ signup_errors: { serverError: "user delete failure" } }) //mongo db error; unprocesable
+    );
 });
 
 export default router;
