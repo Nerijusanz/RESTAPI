@@ -25,7 +25,7 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false
   },
-  geo: GeoSchema
+  geometry: GeoSchema
 });
 
 const User = mongoose.model("User", UserSchema);
