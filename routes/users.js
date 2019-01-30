@@ -5,7 +5,46 @@ import User from "../models/User";
 const router = express.Router();
 
 router.get("/", (req, res, next) => {
-  res.send({ request: "GET" });
+  if (!req.query.lng || !req.query.lat) {
+    res
+      .status(500)
+      .send({ signup_errors: { serverError: "longitute lattitude undefined" } })
+      .end();
+    return;
+  }
+
+  // ----------------geo params -------------------
+  const GEO = {
+    type: "Point",
+    coord: {
+      lng: parseFloat(req.query.lng),
+      lat: parseFloat(req.query.lat)
+    },
+    maxDistance: 100000, // metres
+    spherical: true,
+    distanceField: "dist.calculated"
+  };
+
+  //---------------------geo setup --------------------------------------
+
+  User.aggregate()
+    .near({
+      type: GEO.type,
+      near: [GEO.coord.lng, GEO.coord.lat],
+      maxDistance: GEO.maxDistance,
+      spherical: GEO.spherical,
+      distanceField: GEO.distanceField
+    })
+    .then(function(users) {
+      res.send(users);
+    })
+    .catch(err =>
+      res
+        .status(500)
+        .send({ signup_errors: { serverError: "user get failure" } })
+    );
+
+  //-----------------------------------------------------------------------
 });
 
 router.post("/", (req, res, next) => {
@@ -17,7 +56,7 @@ router.post("/", (req, res, next) => {
     return;
   }
 
-  const { name, rank, available } = req.body.user;
+  const { name, rank, available, geometry } = req.body.user;
 
   const validationErrors = [];
 
@@ -47,6 +86,17 @@ router.post("/", (req, res, next) => {
     validationErrors.push({
       field: "available",
       error: "choose available"
+    });
+  }
+
+  if (
+    typeof geometry === "undefined" ||
+    typeof geometry.type === "undefined" ||
+    typeof geometry.coordinates == "undefined"
+  ) {
+    validationErrors.push({
+      field: "geometry",
+      error: "user geometry data undefined"
     });
   }
 
