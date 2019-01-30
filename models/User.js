@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "name field is required"]
@@ -14,4 +14,6 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model("User", schema);
+
+module.exports = User;
